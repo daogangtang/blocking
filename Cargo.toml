@@ -1,7 +1,7 @@
 [package]
 name = "superpoll-blocking"
-version = "1.0.2"
-authors = ["Stjepan Glavina <stjepang@gmail.com>"]
+version = "0.1.0"
+authors = ["Stjepan Glavina <stjepang@gmail.com>", "Daogang Tang <daogangtang@gmail.com>"]
 edition = "2018"
 description = "A thread pool for isolating blocking I/O in async programs"
 license = "Apache-2.0 OR MIT"

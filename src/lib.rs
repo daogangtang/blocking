@@ -88,10 +88,14 @@ use std::task::{Context, Poll};
 use std::thread;
 use std::time::Duration;
 
-use async_channel::{bounded, Receiver};
+//use async_channel::{bounded, Receiver};
+use futures::channel::mpsc::{channel, Receiver};
+// TODO: replace async_task with futures::task?
 use async_task::{Runnable, Task};
-use atomic_waker::AtomicWaker;
-use futures_lite::{future, prelude::*, ready};
+//use atomic_waker::AtomicWaker;
+use futures::task::AtomicWaker;
+//use futures_lite::{future, prelude::*, ready};
+use futures::{future, prelude::*, ready};
 use once_cell::sync::Lazy;
 
 /// Lazily initialized global executor.
@@ -422,7 +426,8 @@ impl<T> Unblock<T> {
             }
         };
 
-        let (sender, receiver) = bounded(1);
+        //let (sender, receiver) = bounded(1);
+        let (mut sender, mut receiver) = channel(1);
         let task = Executor::spawn(async move {
             sender.try_send(op(&mut t)).ok();
             t
@@ -430,7 +435,8 @@ impl<T> Unblock<T> {
         self.state = State::WithMut(task);
 
         receiver
-            .recv()
+            //.recv()
+            .next()
             .await
             .expect("`Unblock::with_mut()` operation has panicked")
     }
@@ -620,7 +626,8 @@ where
                     // This channel capacity seems to work well in practice. If it's too low, there
                     // will be too much synchronization between tasks. If too high, memory
                     // consumption increases.
-                    let (sender, receiver) = bounded(self.cap.unwrap_or(8 * 1024)); // 8192 items
+                    //let (sender, receiver) = bounded(self.cap.unwrap_or(8 * 1024)); // 8192 items
+                    let (mut sender, receiver) = channel(self.cap.unwrap_or(8 * 1024)); // 8192 items
 
                     // Spawn a blocking task that runs the iterator and returns it when done.
                     let task = Executor::spawn(async move {

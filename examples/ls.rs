@@ -8,13 +8,13 @@
 
 use std::{env, fs, io};
 
-use blocking::Unblock;
-use futures_lite::{future, prelude::*};
+use superpoll_blocking::Unblock;
+use futures::{executor, prelude::*};
 
 fn main() -> io::Result<()> {
     let path = env::args().nth(1).unwrap_or(".".into());
 
-    future::block_on(async {
+    executor::block_on(async {
         let mut dir = Unblock::new(fs::read_dir(path)?);
 
         while let Some(item) = dir.next().await {

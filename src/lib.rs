@@ -21,10 +21,10 @@
 //! Read the contents of a file:
 //!
 //! ```no_run
-//! use blocking::unblock;
+//! use superpoll_blocking::unblock;
 //! use std::fs;
 //!
-//! # futures_lite::future::block_on(async {
+//! # futures::executor::block_on(async {
 //! let contents = unblock(|| fs::read_to_string("file.txt")).await?;
 //! println!("{}", contents);
 //! # std::io::Result::Ok(()) });
@@ -33,11 +33,11 @@
 //! Read a file and pipe its contents to stdout:
 //!
 //! ```no_run
-//! use blocking::{unblock, Unblock};
-//! use futures_lite::io;
+//! use superpoll_blocking::{unblock, Unblock};
+//! use futures::io;
 //! use std::fs::File;
 //!
-//! # futures_lite::future::block_on(async {
+//! # futures::executor::block_on(async {
 //! let input = unblock(|| File::open("file.txt")).await?;
 //! let input = Unblock::new(input);
 //! let mut output = Unblock::new(std::io::stdout());
@@ -49,11 +49,11 @@
 //! Iterate over the contents of a directory:
 //!
 //! ```no_run
-//! use blocking::Unblock;
-//! use futures_lite::prelude::*;
+//! use superpoll_blocking::Unblock;
+//! use futures::prelude::*;
 //! use std::fs;
 //!
-//! # futures_lite::future::block_on(async {
+//! # futures::executor::block_on(async {
 //! let mut dir = Unblock::new(fs::read_dir(".")?);
 //! while let Some(item) = dir.next().await {
 //!     println!("{}", item?.file_name().to_string_lossy());
@@ -64,10 +64,10 @@
 //! Spawn a process:
 //!
 //! ```no_run
-//! use blocking::unblock;
+//! use superpoll_blocking::unblock;
 //! use std::process::Command;
 //!
-//! # futures_lite::future::block_on(async {
+//! # futures::executor::block_on(async {
 //! let out = unblock(|| Command::new("dir").output()).await?;
 //! # std::io::Result::Ok(()) });
 //! ```
@@ -223,10 +223,10 @@ impl Executor {
 /// Read the contents of a file:
 ///
 /// ```no_run
-/// use blocking::unblock;
+/// use superpoll_blocking::unblock;
 /// use std::fs;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let contents = unblock(|| fs::read_to_string("file.txt")).await?;
 /// # std::io::Result::Ok(()) });
 /// ```
@@ -234,10 +234,10 @@ impl Executor {
 /// Spawn a process:
 ///
 /// ```no_run
-/// use blocking::unblock;
+/// use superpoll_blocking::unblock;
 /// use std::process::Command;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let out = unblock(|| Command::new("dir").output()).await?;
 /// # std::io::Result::Ok(()) });
 /// ```
@@ -298,10 +298,10 @@ where
 /// # Examples
 ///
 /// ```
-/// use blocking::Unblock;
-/// use futures_lite::prelude::*;
+/// use superpoll_blocking::Unblock;
+/// use futures::prelude::*;
 ///
-/// # futures_lite::future::block_on(async {
+/// # futures::executor::block_on(async {
 /// let mut stdout = Unblock::new(std::io::stdout());
 /// stdout.write_all(b"Hello world!").await?;
 /// stdout.flush().await?;
@@ -318,7 +318,7 @@ impl<T> Unblock<T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use blocking::Unblock;
+    /// use superpoll_blocking::Unblock;
     ///
     /// let stdin = Unblock::new(std::io::stdin());
     /// ```
@@ -344,7 +344,7 @@ impl<T> Unblock<T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use blocking::Unblock;
+    /// use superpoll_blocking::Unblock;
     ///
     /// let stdout = Unblock::with_capacity(64 * 1024, std::io::stdout());
     /// ```
@@ -363,10 +363,10 @@ impl<T> Unblock<T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use blocking::{unblock, Unblock};
+    /// use superpoll_blocking::{unblock, Unblock};
     /// use std::fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = unblock(|| File::create("file.txt")).await?;
     /// let mut file = Unblock::new(file);
     ///
@@ -395,10 +395,10 @@ impl<T> Unblock<T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use blocking::{unblock, Unblock};
+    /// use superpoll_blocking::{unblock, Unblock};
     /// use std::fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = unblock(|| File::create("file.txt")).await?;
     /// let mut file = Unblock::new(file);
     ///
@@ -449,11 +449,11 @@ impl<T> Unblock<T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use blocking::{unblock, Unblock};
-    /// use futures_lite::prelude::*;
+    /// use superpoll_blocking::{unblock, Unblock};
+    /// use futures::prelude::*;
     /// use std::fs::File;
     ///
-    /// # futures_lite::future::block_on(async {
+    /// # futures::executor::block_on(async {
     /// let file = unblock(|| File::create("file.txt")).await?;
     /// let file = Unblock::new(file);
     ///

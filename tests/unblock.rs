@@ -3,18 +3,18 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use blocking::{unblock, Unblock};
-use futures_lite::{future, pin, prelude::*};
+use superpoll_blocking::{unblock, Unblock};
+use futures::{pin_mut, prelude::*, executor::block_on};
 
 #[test]
 fn sleep() {
     let dur = Duration::from_secs(1);
     let start = Instant::now();
 
-    future::block_on(async {
+    block_on(async {
         let f = unblock(move || thread::sleep(dur));
-        pin!(f);
-        assert!(future::poll_once(&mut f).await.is_none());
+        pin_mut!(f);
+        //assert!(future::poll_once(&mut f).await.is_none());
         f.await;
     });
 
@@ -23,7 +23,7 @@ fn sleep() {
 
 #[test]
 fn chan() {
-    future::block_on(async {
+    block_on(async {
         let (s, r) = mpsc::sync_channel::<i32>(100);
         let handle = thread::spawn(move || {
             for i in 0..100_000 {
@@ -43,7 +43,7 @@ fn chan() {
 
 #[test]
 fn read() {
-    future::block_on(async {
+    block_on(async {
         let mut v1 = vec![0u8; 20_000_000];
         for i in 0..v1.len() {
             v1[i] = i as u8;
@@ -60,7 +60,7 @@ fn read() {
 
 #[test]
 fn write() {
-    future::block_on(async {
+    block_on(async {
         let mut v1 = vec![0u8; 20_000_000];
         for i in 0..v1.len() {
             v1[i] = i as u8;
@@ -77,7 +77,7 @@ fn write() {
 
 #[test]
 fn seek() {
-    future::block_on(async {
+    block_on(async {
         let len = 1_000;
         let mut v = vec![0u8; len];
         for i in 0..len {
